@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Python</fullName>
+    <active>true</active>
+    <label>Python</label>
+    <picklistValues>
+        <picklist>SuperPickList__c</picklist>
+        <values>
+            <fullName>Four Python</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Three Python</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

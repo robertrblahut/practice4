@@ -1,0 +1,15 @@
+<apex:page controller="BasicClassesController">
+    <apex:pageBlock>
+        <apex:pageBlockSection>
+            {! 'Hello, ' + UserFirstName + ' ' + UserLastName }
+        </apex:pageBlockSection>
+        <apex:pageBlockSection>
+            <p>Your Id: {! UserId }</p>
+            <p>Your currency: {! CurrentCurrency }</p>
+            <p>Your email: {! UserEmail }</p>
+            <p>Your organization name: {! OrgName }</p>
+            <p>Today: {! Today }</p>
+            <p>You have {! LeftQueries } left queries</p>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:page>
