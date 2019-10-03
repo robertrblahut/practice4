@@ -1,17 +1,16 @@
 public with sharing class PECUtils {
 
 
-
     // how namy engines to generate
-    private static Integer COUNT_OF_GENERATING_ENGINES = 101; 
+    private static Integer COUNT_OF_GENERATING_ENGINES = 2; 
 
     // max count of parts that have generated engine
-    private static Integer MAX_COUNT_OF_PARTS = 5;
+    private static Integer MAX_COUNT_OF_PARTS = 2;
     // max count of cars that have generated engine
-    private static Integer MAX_COUNT_OF_CARS = 5;
+    private static Integer MAX_COUNT_OF_CARS = 2;
 
     // the length of name postfix of generated objects
-    private static Integer LENGTH_OF_NAMEPOSTFIX = 3;
+    private static Integer LENGTH_OF_NAMEPOSTFIX = 1;
 
 
 
@@ -233,16 +232,20 @@ public with sharing class PECUtils {
     @param {Engine__c} engine
     @return {List<Car__c>} list of copied cars for engine 
      */
-    private static List<Car__c> makeCopyOfCars(Engine__c engine) {
+    private static List<Car__c> makeCopyOfCars(List<Engine__c> engines, Id engineId, Id cloneEngineId) {
         List<Car__c> copyCars = new List<Car__c>();
 
-        for (Car__c car: [SELECT Name, Engine__r.Id FROM Car__c WHERE Engine__r.Id = :engine.getCloneSourceId()]) {
-            
-            Car__c copyCar = new Car__c();
-            copyCar.Name = car.Name;
-            copyCar.Engine__c = engine.Id;
+        for (Engine__c engine : engines) {
+            if (engine.Id == cloneEngineId) {
+                for (Car__c car : engine.Cars__r) {
+                    
+                    Car__c copyCar = new Car__c();
+                    copyCar.Name = car.Name;
+                    copyCar.Engine__c = engineId;
 
-            copyCars.add(copyCar);
+                    copyCars.add(copyCar);
+                }
+            }
         }
 
         return copyCars;
@@ -254,16 +257,20 @@ public with sharing class PECUtils {
     @param {Engine__c} engine
     @return {List<Part__c>} list of copied parts for engine 
      */
-    private static List<Part__c> makeCopyOfParts(Engine__c engine) {
+    private static List<Part__c> makeCopyOfParts(List<Engine__c> engines, Id engineId, Id cloneEngineId) {
         List<Part__c> copyParts = new List<Part__c>();
 
-        for (Part__c part: [SELECT Name, Engine__r.Id FROM Part__c WHERE Engine__r.Id = :engine.getCloneSourceId()]) {
-            
-            Part__c copyPart = new Part__c();
-            copyPart.Name = part.Name;
-            copyPart.Engine__c = engine.Id;
+        for (Engine__c engine : engines) {
+            if (engine.Id == cloneEngineId) {
+                for (Part__c part : engine.Parts__r) {
+                    
+                    Part__c copyPart = new Part__c();
+                    copyPart.Name = part.Name;
+                    copyPart.Engine__c = engineId;
 
-            copyParts.add(copyPart);
+                    copyParts.add(copyPart);
+                }
+            }
         }
 
         return copyParts;
@@ -279,7 +286,7 @@ public with sharing class PECUtils {
 
         for (Engine__c engine : [SELECT Id, Name, (SELECT Name FROM Cars__r), (SELECT Name FROM Parts__r) FROM Engine__c]) {
             
-            Engine__c copyEngine = engine.clone(false, true, false, false);
+            Engine__c copyEngine = engine.clone();
             
             copyEngines.add(copyEngine);
         }
@@ -297,10 +304,11 @@ public with sharing class PECUtils {
         List<Part__c> copyParts = new List<Part__c>();
 
         List<Engine__c> copyEngines = makeCopyOfEngines();
+        List<Engine__c> allEngines = [SELECT Name, (SELECT Name FROM Cars__r), (SELECT Name FROM Parts__r) FROM Engine__c];
 
         for (Engine__c engine : copyEngines) {
-            copyCars.addAll(makeCopyOfCars(engine));
-            copyParts.addAll(makeCopyOfParts(engine));
+            copyCars.addAll(makeCopyOfCars(allEngines, engine.Id, engine.getCloneSourceId()));
+            copyParts.addAll(makeCopyOfParts(allEngines, engine.Id, engine.getCloneSourceId()));
         }
 
         insert copyCars;
