@@ -179,14 +179,26 @@ public with sharing class PECUtils {
 
         Map<Id, List<Part__c>> partsById = new Map<Id, List<Part__c>>();
 
-        List<Car__c> cars = [SELECT Id, Engine__r.Id FROM Car__c];
+        List<Engine__c> allEngines = [SELECT (SELECT Name FROM Cars__r), (SELECT Name FROM Parts__r) FROM Engine__c]; 
+
+        for (Engine__c engine : allEngines) {
+            for (Car__c car : engine.Cars__r) {
+                partsById.put(car.Id, engine.Parts__r);
+            }
+        }
+
+        return partsById;
+
+        
+
+        /*List<Car__c> cars = [SELECT Id, Engine__r.Id FROM Car__c];
         List<Engine__c> engines = [SELECT Id, (SELECT Name FROM Parts__r) FROM Engine__c];
 
         for (Car__c car: cars) {
             partsById.put(car.Id, partsOfCarEngine(engines, car.Engine__r.Id));
         }
 
-        return partsById;
+        return partsById;*/
     }
 
     
