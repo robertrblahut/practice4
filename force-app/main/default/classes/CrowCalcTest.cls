@@ -43,13 +43,9 @@ public class CrowCalcTest {
 
     @isTest
     public static void testAddCrowsBulkCase() {
-        Boolean addCrowsResult;
-
-        try {
-            addCrowsResult = CrowCalc.addCrows(1000);
-        } catch (Exception e) {
-            System.assertEquals(false, addCrowsResult, 'Failed addition not "false"');
-        }
+        Boolean addCrowsResult = CrowCalc.addCrows(5000);
+        
+        System.assertEquals(true, addCrowsResult, 'Succed addition not "true"');
     }
 
     @isTest
