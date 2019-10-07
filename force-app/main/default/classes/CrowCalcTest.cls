@@ -8,6 +8,9 @@ public class CrowCalcTest {
         createCrows(COUNT_OF_INITIAL_CROWS);
     }
 
+    /**
+    Helper method that creates crows before tests are invoked
+     */
     private static void createCrows(Integer howMany) {
         List<Crow__c> crowsToAdd = new List<Crow__c>();
 
@@ -42,6 +45,13 @@ public class CrowCalcTest {
     }
 
     @isTest
+    public static void testAddCrowsNegativeCaseNegativeNumber() {
+        Boolean addCrowsResult = CrowCalc.addCrows(-1);
+
+        System.assertEquals(true, addCrowsResult);
+    }
+
+    @isTest
     public static void testAddCrowsBulkCase() {
         Boolean addCrowsResult = CrowCalc.addCrows(5000);
         
@@ -63,6 +73,19 @@ public class CrowCalcTest {
     @isTest
     public static void testSubtractCrowsNegativeCaseNull() {
         Boolean substractCrowsResult = CrowCalc.subtractCrows(null);
+
+        System.assertEquals(false, substractCrowsResult);
+    }
+
+    @isTest
+    public static void testSubtractCrowsNegativeCaseNegativeNumber() {
+        Boolean substractCrowsResult;
+
+        try {
+            substractCrowsResult = CrowCalc.subtractCrows(-2);
+        } catch (Exception e) {
+            substractCrowsResult = false;
+        }
 
         System.assertEquals(false, substractCrowsResult);
     }
