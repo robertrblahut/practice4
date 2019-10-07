@@ -5,9 +5,13 @@ public class CrowCalcTest {
 
     @TestSetup
     static void makeData(){
+        createCrows(COUNT_OF_INITIAL_CROWS);
+    }
+
+    private static void createCrows(Integer howMany) {
         List<Crow__c> crowsToAdd = new List<Crow__c>();
 
-        for (Integer i = 0; i < COUNT_OF_INITIAL_CROWS; i++) {
+        for (Integer i = 0; i < howMany; i++) {
             Crow__c crow = new Crow__c();
             crowsToAdd.add(crow);
         }
@@ -16,9 +20,9 @@ public class CrowCalcTest {
     }
 
     @isTest
-    public static void testAddCrows() {
+    public static void testAddCrowsPositiveCase() {
 
-        Integer initialCrows = 0;
+        Integer initialCrows = COUNT_OF_INITIAL_CROWS;
 
         Boolean addCrowsResult = CrowCalc.addCrows(10);
 
@@ -31,10 +35,28 @@ public class CrowCalcTest {
     }
 
     @isTest
-    public static void testSubtractCrows() {
+    public static void testAddCrowsNegativeCaseNull() {
+        Boolean addCrowsResult = CrowCalc.addCrows(null);
+
+        System.assertEquals(false, addCrowsResult, 'Failed addition not "false"');
+    }
+
+    @isTest
+    public static void testAddCrowsBulkCase() {
+        Boolean addCrowsResult;
+
+        try {
+            addCrowsResult = CrowCalc.addCrows(1000);
+        } catch (Exception e) {
+            System.assertEquals(false, addCrowsResult, 'Failed addition not "false"');
+        }
+    }
+
+    @isTest
+    public static void testSubtractCrowsPositiveCase() {
         Integer crowsBefore = [SELECT Count() FROM Crow__c]; // 10
 
-        Boolean substractCrowsResult = CrowCalc.substractCrows(8);
+        Boolean substractCrowsResult = CrowCalc.subtractCrows(8);
 
         Integer crowsAfter = [SELECT Count() FROM Crow__c]; // must be 2
 
@@ -43,12 +65,18 @@ public class CrowCalcTest {
     }
 
     @isTest
+    public static void testSubtractCrowsNegativeCaseNull() {
+        Boolean substractCrowsResult = CrowCalc.subtractCrows(null);
+
+        System.assertEquals(false, substractCrowsResult);
+    }
+
+    @isTest
     public static void testGetTotal() {
         Integer crowsNow = [SELECT Count() FROM Crow__c]; // 10
-        Integer whatReturnsGetTotalMethod = CrowsCalc.getTotal(); // must be 10
+        Integer whatReturnsGetTotalMethod = CrowCalc.getTotal(); // must be 10
 
         System.assertEquals(COUNT_OF_INITIAL_CROWS, whatReturnsGetTotalMethod, 'Wrong Answer');
-
     }
 
     @isTest
