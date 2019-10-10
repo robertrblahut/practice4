@@ -4,8 +4,8 @@ public class Example3 {
         
         try {
             uniqueContactNames = getUniqueNames('Contact');
-        } catch(Exception ex) {
-            system.debug('Unkown Error: ' + ex.getMessage());
+        } catch(Exception e) {
+            system.debug('Unknown Error: ' + e.getMessage());
         }
         
         return uniqueContactNames;
@@ -16,8 +16,8 @@ public class Example3 {
         
         try {
             uniqueAccountNames = getUniqueNames('Account');
-        } catch(Exception ex) {
-            system.debug('Unkown Error: ' + ex.getMessage());
+        } catch(Exception e) {
+            system.debug('Unknown Error: ' + e.getMessage());
         }
         
         return uniqueAccountNames;
