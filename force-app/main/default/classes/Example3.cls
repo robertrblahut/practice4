@@ -12,7 +12,7 @@ public class Example3 {
     }
 
     private List<SObject> getRecords(String sObjectApiName) {
-        List<SObject> quiredSObjects 	= new List<SObject>();
+        List<SObject> quiredSObjects = new List<SObject>();
         
         try {
             quiredSObjects = Database.query('SELECT Id, Name FROM ' + sObjectApiName);
