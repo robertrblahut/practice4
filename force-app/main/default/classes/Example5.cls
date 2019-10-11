@@ -1,38 +1,71 @@
 public class Example5 {
-    public static void func() {
-        list<contact> list1 = [select id,name,phone, email from contact];
-        list<contact> list1new = new list<contact>();
-        for(contact c: list1)
-        {
-        Boolean f = false;
-            integer i = 0;
-            for(i=0;i<list1new.size();i++)
-            {
-                if(c.Name == list1new[i].Name){f=true;}
+
+    /**
+    Returns all records of sObject with given name
+     */
+    private static List<SObject> getRecords(String sObjectApiName) {
+        List<SObject> quiredSObjects = new List<SObject>();
+        
+        try {
+            quiredSObjects = Database.query('SELECT Id, Name FROM ' + sObjectApiName);
+        } catch (QueryException e) {
+            System.debug('Query error: ' + e.getMessage());
+            return null;
+        }
+
+        return quiredSObjects;
+    }
+
+    /**
+    Returns set of names of given list of sObjects
+     */
+    private static List<sObject> getUniqueRecords(List<SObject> sObjects) {
+        Set<String> uniqueNames = new Set<String>();
+        List<sObject> uniqueRecords = new List<SObject>();
+
+
+        for(SObject sObj: sObjects) {
             
-            }
-            if(f!=true)
-          {
-         list1new.add(c);       
+            Integer uniqueNamesSizeBefore = uniqueNames.size();
+            uniqueNames.add(String.valueOf(sObj.get('Name')));
+            Integer uniqueNamesSizeAfter = uniqueNames.size();
+
+            Boolean isChangedUniqueNamesSize = uniqueNamesSizeBefore != uniqueNamesSizeAfter;
+            
+            if (!isChangedUniqueNamesSize) {
+                uniqueRecords.add(sObj);
             }
         }
-        delete list1new;
-        list<lead> list2 = [select id,name,phone, email,title from Lead];
-        list<lead> list2new = new list<lead>();
-        for(lead c: list2)
-        {
-        Boolean f = false;
-            integer i = 0;
-            for(i=0;i<list2new.size();i++)
-            {
-                if(c.Name == list2new[i].Name){f=true;}
-            
-            }
-            if(f!=true)
-          {
-         list2new.add(c);       
-            }
-        }
-        delete list2new;
+        
+        return uniqueRecords;
+    }
+
+    /**
+    Deletes unique records from a given list of sObjects
+     */
+    private static void deleteUniqueRecords(List<SObject> sObjects) {
+        delete getUniqueRecords(sObjects);
+    }
+
+    /**
+    Deletes unique Contact records
+     */
+    private static void deleteUniqueContacts() { 
+        deleteUniqueRecords(getRecords('Contacts'));
+    }
+
+    /**
+    Deletes unique Lead records
+     */
+    private static void deleteUniqueLeads() {
+        deleteUniqueRecords(getRecords('Leads'));
+    }
+
+    /**
+    Deletes unique Contact and Lead records
+     */
+    public static void deleteUniqueContactsAndLeads() {
+        deleteUniqueContacts();
+        deleteUniqueLeads();
     }
 }

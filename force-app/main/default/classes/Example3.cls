@@ -1,35 +1,33 @@
 public class Example3 {
     public Set<String> getUniqueContactNames() {
-        Set<String> uniqueContactNames = new Set<String>();
-        
-        try {
-            uniqueContactNames = getUniqueNames('Contact');
-        } catch(Exception e) {
-            system.debug('Unknown Error: ' + e.getMessage());
-        }
-        
-        return uniqueContactNames;
+        return getUniqueNames('Contact');
     }
     
     public Set<String> getUniqueAccountNames() {
-        Set<String> uniqueAccountNames = new Set<String>();
-        
-        try {
-            uniqueAccountNames = getUniqueNames('Account');
-        } catch(Exception e) {
-            system.debug('Unknown Error: ' + e.getMessage());
-        }
-        
-        return uniqueAccountNames;
+        return getUniqueNames('Account');
     }
     
     private Set<String> getUniqueNames(String sObjectApiName) {
+        return getUniqueRecordNames(getRecords(sObjectApiName));
+    }
+
+    private List<SObject> getRecords(String sObjectApiName) {
+        List<SObject> quiredSObjects 	= new List<SObject>();
+        
+        try {
+            quiredSObjects = Database.query('SELECT Id, Name FROM ' + sObjectApiName);
+        } catch (QueryException e) {
+            System.debug('Query error: ' + e.getMessage());
+            return null;
+        }
+
+        return quiredSObjects;
+    }
+    
+    private Set<String> getUniqueRecordNames(List<SObject> sObjects) {
         Set<String> uniqueNames = new Set<String>();
-        List<SObject> sobjects 	= new List<SObject>();
         
-        sobjects = Database.query('SELECT Id, Name FROM ' + sObjectApiName);
-        
-        for(SObject sobj: sobjects) {
+        for(SObject sobj: sObjects) {
             uniqueNames.add(String.valueOf(sobj.get('Name')));
         }
         
