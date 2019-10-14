@@ -6,7 +6,7 @@ public class ContactProfit implements Profit {
         this.profit = anContact.profit__c;
     }
 
-    Decimal calculate() {
+    public Decimal calculate() {
         return profit;
     }
 }

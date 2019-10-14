@@ -3,6 +3,8 @@ public class AccountProfit implements Profit {
     private List<ContactProfit> profits;
 
     public AccountProfit(Account anAccount) {
+        this.profits = new List<ContactProfit>();
+        
         List<Contact> relatedContacts = [SELECT Id, Profit__c FROM Contact WHERE AccountId = :anAccount.Id];
         for (Contact anContact : relatedContacts) {
             profits.add(new ContactProfit(anContact));

@@ -8,7 +8,7 @@ public class VCSS {
     private VCS vcsStrategy;
     
     public VCSS(String vcsStrategyName) {
-        vcs = strategies.get(vcsStrategyName);
+        vcsStrategy = strategies.get(vcsStrategyName);
     }
 
     public String push() {

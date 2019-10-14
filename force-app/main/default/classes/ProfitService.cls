@@ -1,6 +1,7 @@
 public class ProfitService {
 
     public static Decimal calculate(List<Profit> profits) {
+
         Decimal totalProfit = 0;
         for (Profit aProfit: profits) {
             totalProfit += aProfit.calculate();
