@@ -1,13 +1,13 @@
 public class GitLab implements VCS {
-    public void push() {
-        System.debug('push to GitLab repository');
+    public String push() {
+        return 'push to GitLab repository';
     }
 
-    public void pull() {
-        System.debug('pull from GitLab repository');
+    public String pull() {
+        return 'pull from GitLab repository';
     }
 
-    public void commitChanges() {
-        System.debug('commit changes in GitLab repository');
+    public String commitChanges() {
+        return 'commit changes in GitLab repository';
     }
 }

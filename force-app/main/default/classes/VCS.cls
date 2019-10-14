@@ -1,5 +1,5 @@
 public interface VCS {
-    void push();
-    void pull();
-    void commitChanges();
+    String push();
+    String pull();
+    String commitChanges();
 }

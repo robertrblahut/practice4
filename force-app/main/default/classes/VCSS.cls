@@ -11,15 +11,15 @@ public class VCSS {
         vcs = strategies.get(vcsStrategyName);
     }
 
-    public void push() {
-        vcsStrategy.push();
+    public String push() {
+        return vcsStrategy.push();
     }
 
-    public void pull() {
-        vcsStrategy.pull();
+    public String pull() {
+        return vcsStrategy.pull();
     }
 
-    public void commitChanges() {
-        vcsStrategy.commitChanges();
+    public String commitChanges() {
+        return vcsStrategy.commitChanges();
     }
 }
