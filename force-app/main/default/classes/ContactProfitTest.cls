@@ -13,4 +13,5 @@ public class ContactProfitTest {
 
         System.assertEquals(10, aContactProfit.calculate(), 'Wrong calculation of contact profit');
     }
+    
 }
