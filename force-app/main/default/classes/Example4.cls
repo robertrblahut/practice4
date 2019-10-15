@@ -25,16 +25,13 @@ public class Example4 {
     Returns all records of sObject with given name
      */
     private List<SObject> getRecords(String sObjectApiName) {
-        List<SObject> quiredSObjects = new List<SObject>();
+        List<SObject> records = new List<SObject>();
         
-        try {
-            quiredSObjects = Database.query('SELECT Id, Name FROM ' + sObjectApiName);
-        } catch (QueryException e) {
-            System.debug('Query error: ' + e.getMessage());
-            return null;
+        if (Schema.getGlobalDescribe().containsKey(sObjectApiName)) {
+            records = Database.query('SELECT Id, Name FROM ' + sObjectApiName);
         }
 
-        return quiredSObjects;
+        return records;
     }
     
     /**
@@ -43,8 +40,8 @@ public class Example4 {
     private Set<String> getUniqueRecordNames(List<SObject> sObjects) {
         Set<String> uniqueNames = new Set<String>();
         
-        for(SObject sobj: sObjects) {
-            uniqueNames.add(String.valueOf(sobj.get('Name')));
+        for (SObject recordItem: sObjects) {
+            uniqueNames.add(String.valueOf(recordItem.get('Name')));
         }
         
         return uniqueNames;

@@ -1,14 +1,11 @@
 public class Example1 {
-	public Set<String> getUniqueContactNames() {
+	public List<String> getUniqueContactNames() {
         Set<String> uniqueContactNames = new Set<String>();
-        List<Contact> contacts = new List<Contact>();
         
-        contacts = [SELECT Id, Name FROM Contact];
-        
-        for(Contact cont: contacts) {
-            uniqueContactNames.add(cont.Name);
+        for (Contact contactItem: [SELECT Id, Name FROM Contact]) {
+            uniqueContactNames.add(contactItem.Name);
         }
         
-        return uniqueContactNames;
+        return new List<String>(uniqueContactNames);
     }
 }
