@@ -6,51 +6,17 @@ public class AccountSwitcherImpl implements AccountSwitcher {
         for (List<Contact> contacts : [SELECT Amount__c FROM Contact]) {
             for (Contact aContact : contacts) {
                 if (aContact.amount__c > 10000) {
-                    createPrivateContact(aContact);
+                    allContacts.add(new PrivateContact(aContact, generateNumber()));
                 } else {
-                    createPublicContact(aContact);
+                    allContacts.add(new PublicContact(aContact, generateNumber()));
                 }
             }
         }
     }
 
-    private void createPrivateContact(Contact aContact) {
-        PrivateContact aPrivateContact = new PrivateContact();
-        aPrivateContact.contactRecord = aContact;
-        aPrivateContact.cardNumber = generateNumber();
-        aPrivateContact.contactTypeName = chooseTypeOfContact(aPrivateContact.cardNumber);
-                    
-        allContacts.add(aPrivateContact);
-    }
-
-    private void createPublicContact(Contact aContact) {
-        PublicContact aPublicContact = new PublicContact();
-        aPublicContact.contactRecord = aContact;
-        aPublicContact.volunteerNumber = generateNumber();
-        aPublicContact.contactTypeName = 'Person';
-
-        allContacts.add(aPublicContact);
-    }
-
     private Integer generateNumber() {
         return Integer.valueOf(Math.random() * 1000000);
     }
-
-    private String chooseTypeOfContact(Integer cardNumber) {
-        if (numHasThreeEqualDigits(cardNumber) == true) {
-            return 'Premier';
-        } else {
-            return 'Person';
-        }
-    }
-
-    private Boolean numHasThreeEqualDigits(Integer num) {
-        Set<String> digitsOfNumber = new Set<String>(String.valueOf(num).split(''));
-
-        return digitsOfNumber.size() <= 3 ? true : false;
-    }
-
-    // 
 
     public DataResult switchAccount() {
         List<PrivateContact> privateContacts = getAllPrivateContacts();
@@ -58,9 +24,10 @@ public class AccountSwitcherImpl implements AccountSwitcher {
 
         switchAccountBetweenContacts(publicContacts, privateContacts);
 
+        updateDataOnOrg();
+
         return aDataResult;
     }
-
 
     private List<PrivateContact> getAllPrivateContacts() {
         List<PrivateContact> privateContacts = new List<PrivateContact>();
@@ -85,18 +52,23 @@ public class AccountSwitcherImpl implements AccountSwitcher {
     private void switchAccountBetweenContacts(List<PublicContact> publicContacts, List<PrivateContact> privateContacts) {
         List<PrivateContact> privateContactsCanBeChanged = getPrivateContactsCanBeChanged(privateContacts);
 
-        Integer sizeOfSmaller = privateContactsCanBeChanged.size() <= publicContacts.size() ? privateContactsCanBeChanged.size() : publicContacts.size();
+        Integer sizeOfSmaller;
+        if (privateContactsCanBeChanged.size() <= publicContacts.size()) {
+            sizeOfSmaller = privateContactsCanBeChanged.size();
+        } else {
+            sizeOfSmaller = publicContacts.size();
+        }
 
         for (Integer i = 0; i < sizeOfSmaller; i++) {
-            switchAccountBetweenContacts(publicContacts.get(i), privateContacts.get(i));
-            addContactsToDataResult(publicContacts.get(i), privateContacts.get(i));
+            switchAccountBetweenContacts(publicContacts.get(i), privateContactsCanBeChanged.get(i));
+            addContactsToDataResult(publicContacts.get(i), privateContactsCanBeChanged.get(i));
         }
     }
 
     private List<PrivateContact> getPrivateContactsCanBeChanged(List<PrivateContact> privateContacts) {
         List<PrivateContact> privateContactsCanBeChanged = new List<PrivateContact>();
         for (PrivateContact aPrivateContact : privateContacts) {
-            if (aPrivateContact.contactTypeName != 'Premier') {
+            if (aPrivateContact.getContactTypeName() != 'Premier') {
                 privateContactsCanBeChanged.add(aPrivateContact);
             } else {
                 this.aDataResult.nonChangedPrivateContacts.add(aPrivateContact);
@@ -106,13 +78,25 @@ public class AccountSwitcherImpl implements AccountSwitcher {
     }
 
     private void switchAccountBetweenContacts(PublicContact aPublicContact, PrivateContact aPrivateContact) {
-        Id accountOfFirstContact = aPublicContact.contactRecord.AccountId;
-        aPublicContact.contactRecord.accountId = aPrivateContact.contactRecord.accountId;
-        aPrivateContact.contactRecord.accountId = accountOfFirstContact;
+        Id accountOfFirstContact = aPublicContact.getContactRecord().AccountId;
+        aPublicContact.getContactRecord().accountId = aPrivateContact.getContactRecord().accountId;
+        aPrivateContact.getContactRecord().accountId = accountOfFirstContact;
     }
 
     private void addContactsToDataResult(PublicContact aPublicContact, PrivateContact aPrivateContact) {
         this.aDataResult.changedPublicContacts.add(aPublicContact);
         this.aDataResult.changedPrivateContacts.add(aPrivateContact);
+    }
+
+    private void updateDataOnOrg() {
+        List<Contact> contactsToUpdate = new List<Contact>();
+        for (PrivateContact aPrivateContact : this.aDataResult.changedPrivateContacts) {
+            contactsToUpdate.add(aPrivateContact.getContactRecord());
+        }
+        for (PublicContact aPublicContact : this.aDataResult.changedPublicContacts) {
+            contactsToUpdate.add(aPublicContact.getContactRecord());
+        }
+
+        update contactsToUpdate;
     }
 }

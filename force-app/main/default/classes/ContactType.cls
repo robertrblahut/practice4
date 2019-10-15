@@ -1,4 +1,8 @@
 public abstract class ContactType {
-    public String contactTypeName { get; set; }
-    public Double AmountOfMoney { get; set; }
+    protected String contactTypeName;
+    protected Double AmountOfMoney;
+
+    public String getContactTypeName() {
+        return this.contactTypeName;
+    }
 }

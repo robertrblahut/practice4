@@ -1,4 +1,18 @@
 public class PublicContact extends ContactType {
-    public Integer VolunteerNumber { get; set; }
-    public Contact ContactRecord { get; set; }
+    private Integer volunteerNumber;
+    private Contact contactRecord;
+
+    public PublicContact(Contact aContact, Integer volunteerNumber) {
+        this.contactRecord = aContact;
+        this.volunteerNumber = volunteerNumber;
+        this.contactTypeName = 'Person';
+    }
+
+    public Integer getVolunteerNumber() {
+        return this.volunteerNumber;
+    }
+
+    public Contact getContactRecord() {
+        return this.contactRecord;
+    }
 }
