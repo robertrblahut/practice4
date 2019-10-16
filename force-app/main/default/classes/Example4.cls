@@ -37,10 +37,10 @@ public class Example4 {
     /**
     Returns set of names of given list of sObjects
      */
-    private Set<String> getUniqueRecordNames(List<SObject> sObjects) {
+    private Set<String> getUniqueRecordNames(List<SObject> records) {
         Set<String> uniqueNames = new Set<String>();
         
-        for (SObject recordItem: sObjects) {
+        for (SObject recordItem: records) {
             uniqueNames.add(String.valueOf(recordItem.get('Name')));
         }
         

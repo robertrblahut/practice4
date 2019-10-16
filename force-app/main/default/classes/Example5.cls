@@ -7,7 +7,7 @@ public class Example5 {
         if (Schema.getGlobalDescribe().containsKey(sObjectApiName)) {
             return Database.query('SELECT Id, Name FROM ' + sObjectApiName + ' LIMIT 50000');
         } 
-        return null;
+        return new List<SObject>();
     }
 
     /**
@@ -16,7 +16,9 @@ public class Example5 {
     private static List<sObject> getUniqueRecords(List<SObject> records) {
         Map<String, sObject> uniqueRecordsByName = new Map<String, sObject>();
         for (SObject recordItem: records) {
-            if (!uniqueRecordsByName.containsKey(String.valueOf(recordItem.get('Name')))) {
+            String name = String.valueOf(recordItem.get('Name'));
+            Boolean isUniqueName = !uniqueRecordsByName.containsKey(name);
+            if (isUniqueName) { 
                 uniqueRecordsByName.put(String.valueOf(recordItem.get('Name')), recordItem);
             }
         }
@@ -27,7 +29,7 @@ public class Example5 {
     Deletes unique records from a given list of sObjects
      */
     private static void deleteUniqueRecords(List<SObject> records) {
-        if (records.size() <= Limits.getLimitDmlRows()) {
+        if (records.size() <= Limits.getLimitDmlRows() - Limits.getDmlRows()) {
             delete getUniqueRecords(records);   
         }
     }
