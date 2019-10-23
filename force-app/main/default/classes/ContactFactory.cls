@@ -16,7 +16,7 @@ public class ContactFactory {
     }
 
     public static List<Contact> createRandomContacts() {
-        Integer HOW_MANY_CONTACTS_CREATE = 7;
+        Integer HOW_MANY_CONTACTS_CREATE = 5;
 
         List<Contact> records = new List<Contact>();
 
